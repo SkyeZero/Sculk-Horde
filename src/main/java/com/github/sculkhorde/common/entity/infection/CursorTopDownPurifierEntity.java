@@ -2,8 +2,8 @@ package com.github.sculkhorde.common.entity.infection;
 
 import com.github.sculkhorde.core.ModBlocks;
 import com.github.sculkhorde.core.ModEntities;
+import com.github.sculkhorde.systems.BlockInfestationSystem;
 import com.github.sculkhorde.util.BlockAlgorithms;
-import com.github.sculkhorde.util.BlockInfestationHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
@@ -82,7 +82,7 @@ public class CursorTopDownPurifierEntity extends CursorEntity{
             // Have I reached the lowest Y?
             Boolean reachedLowest = currentPos.getY() <= lowestY;
 
-            if (level().getBlockState(currentPos).is(ModBlocks.BlockTags.INFESTED_BLOCK)) { BlockInfestationHelper.tryToCureBlock((ServerLevel) level(), currentPos); } // Purify if possible
+            if (level().getBlockState(currentPos).is(ModBlocks.BlockTags.INFESTED_BLOCK)) { BlockInfestationSystem.tryToCureBlock((ServerLevel) level(), currentPos); } // Purify if possible
 
             if (anyAirBlocks(level(), currentPos)) { lastExposedBlock = this.blockPosition(); } // Record most recent exposed block
             else if (reachedLowest) { snapSelf(); } // If reached the lowest block in the chunk & obstructed, delete self

@@ -1,8 +1,8 @@
 package com.github.sculkhorde.common.entity.infection;
 
 import com.github.sculkhorde.core.ModEntities;
+import com.github.sculkhorde.systems.BlockInfestationSystem;
 import com.github.sculkhorde.util.BlockAlgorithms;
-import com.github.sculkhorde.util.BlockInfestationHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
@@ -99,7 +99,7 @@ public class CursorTopDownInfectorEntity extends CursorEntity{
 
                 lastExposedBlock = this.blockPosition();
 
-                if (BlockInfestationHelper.isInfectable((ServerLevel) level(), currentPos)) { BlockInfestationHelper.tryToInfestBlock((ServerLevel) level(), currentPos); } // Infect if possible
+                if (BlockInfestationSystem.isInfectable((ServerLevel) level(), currentPos)) { BlockInfestationSystem.tryToInfestBlock((ServerLevel) level(), currentPos); } // Infect if possible
 
                 this.setPos(x, currentPos.below().getY(), z);
 
