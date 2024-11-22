@@ -1,21 +1,22 @@
 package com.github.sculkhorde.common.entity.infection;
 
+import com.github.sculkhorde.core.ModBlocks;
+import com.github.sculkhorde.core.ModConfig;
 import com.github.sculkhorde.core.ModEntities;
-import com.github.sculkhorde.systems.BlockInfestationSystem;
 import com.github.sculkhorde.util.BlockAlgorithms;
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
-public class CursorTopDownInfectorEntity extends CursorEntity{
+import static com.github.sculkhorde.util.BlockAlgorithms.isExposedToInfestationWardBlock;
+
+public class CursorTopDownInfectorEntity extends CursorSurfaceInfectorEntity{
     /**
      * An Easier Constructor where you do not have to specify the Mob Type
      *
@@ -27,142 +28,81 @@ public class CursorTopDownInfectorEntity extends CursorEntity{
         super(pType, pLevel);
     }
 
-    public void setLowestY(int y) { lowestY = y;}
-    public void setSpawnCursor(boolean s) { spawnCursor = s;}
-
-    private int lowestY = -63;
-    private boolean spawnCursor = false;
-    private BlockPos lastExposedBlock = null;
-    private BlockPos lastSpawnBlock = null;
-
+    /**
+     * The only change I made was instead of adding all the neighbors to the queue,
+     * just add the block below us.
+     * @return
+     */
     @Override
-    public void tick() {
-        super.tick();
-
-        if (this.level().isClientSide) {return;}
-
-        if(canBeManuallyTicked())
+    protected boolean searchTick() {
+        // Initialize the visited positions map and the queue
+        // Complete 20 times.
+        for (int i = 0; i < Math.max(searchIterationsPerTick, 1); i++)
         {
-            ticksRemainingBeforeCheckingIfInCursorList--;
+            // Breadth-First Search
 
-            if(ticksRemainingBeforeCheckingIfInCursorList <= 0)
-            {
-                // SculkHorde.topDownCursorHandler.computeIfAbsent(this);
-                ticksRemainingBeforeCheckingIfInCursorList = CHECK_DELAY_TICKS;
-            }
-        }
-
-        /*
-        boolean canBeManuallyTickedAndManualControlIsNotOn = (canBeManuallyTicked() && !SculkHorde.topDownCursorHandler.isManualControlOfTickingEnabled());
-        boolean cannotBeManuallyTicked = !canBeManuallyTicked();
-
-        boolean shouldTick = canBeManuallyTickedAndManualControlIsNotOn || cannotBeManuallyTicked;
-         */
-
-        boolean shouldTick = true;
-
-        if(shouldTick) {
-            cursorTick();
-        }
-    }
-
-    @Override
-    public void cursorTick() {
-        float timeElapsedMilliSeconds = System.currentTimeMillis() - lastTickTime;
-        double tickIntervalMillisecondsAfterMultiplier = tickIntervalMilliseconds;
-        if (timeElapsedMilliSeconds < Math.max(tickIntervalMillisecondsAfterMultiplier, 1)) {
-            return;
-        }
-        else {
-            BlockPos currentPos = this.blockPosition();
-
-            double x = currentPos.getX()+0.5;
-            double z = currentPos.getZ()+0.5;
-
-            // Am I currently in a Ward Block or next to one?
-            Boolean isWarded = BlockAlgorithms.isExposedToInfestationWardBlock((ServerLevel) level(), currentPos);
-
-            // Have I reached the lowest Y?
-            Boolean reachedLowest = currentPos.getY() <= lowestY;
-
-            if (!isWarded && level().getBlockState(this.blockPosition()).is(BlockTags.LEAVES)) {
-                level().setBlockAndUpdate(this.blockPosition(), Blocks.AIR.defaultBlockState());
-            }
-
-            // Is current block or next block warded?
-            if (isWarded) {
-
-                if (reachedLowest) { snapSelf(); } // If reached the lowest block in the chunk, delete self
-                else { this.setPos(x, currentPos.below(3).getY(), z); } // If not, skip past ward block area
-
-            } else if (anyAirBlocks(level(), currentPos)) { // Is block exposed to air?
-
-                lastExposedBlock = this.blockPosition();
-
-                if (BlockInfestationSystem.isInfectable((ServerLevel) level(), currentPos)) { BlockInfestationSystem.tryToInfestBlock((ServerLevel) level(), currentPos); } // Infect if possible
-
-                this.setPos(x, currentPos.below().getY(), z);
-
-            } else {
-
-                if (reachedLowest) { snapSelf(); } // If reached the lowest block in the chunk, delete self
-                else { // If not, move down and spawn a surface cursor
-                    if (lastSpawnBlock == null || lastSpawnBlock.getY()+4 < lastExposedBlock.getY()) {
-                        // spawnSurfaceCursor(); // Entities aren't ticking when spawned in for some reason
-                    }
-                    this.setPos(x, currentPos.below().getY(), z);
-                }
-            }
-        }
-
-        lastTickTime = System.currentTimeMillis();
-
-    }
-
-    public void snapSelf() {
-        // spawnSurfaceCursor(); // Entities aren't ticking when spawned in for some reason
-
-        //SculkHorde.topDownCursorHandler.removeCursor(this);
-        this.discard();
-    }
-
-    public void spawnSurfaceCursor() {
-        if (spawnCursor && lastExposedBlock != null) {
-            if (!BlockAlgorithms.isExposedToInfestationWardBlock((ServerLevel) level(), lastExposedBlock)) {
-
-                CursorSurfaceInfectorEntity cursor = new CursorSurfaceInfectorEntity(level());
-                cursor.setPos(lastExposedBlock.getX(), lastExposedBlock.getY() + 1, lastExposedBlock.getZ());
-
-                cursor.setTickIntervalMilliseconds(3);
-                cursor.setMaxTransformations(10);
-                cursor.setMaxRange(50);
-                cursor.setSearchIterationsPerTick(20);
-                cursor.setMaxLifeTimeMillis(TimeUnit.SECONDS.toMillis(10));
-
-                level().addFreshEntity(cursor);
-
-                lastSpawnBlock = lastExposedBlock;
-            }
-        }
-    }
-
-
-    // Check if the specified block has any exposed faces
-    public boolean anyAirBlocks(Level world, BlockPos pos) {
-        ArrayList<BlockPos> list = BlockAlgorithms.getAdjacentNeighbors(pos);
-        for(BlockPos position : list)
-        {
-            BlockState block = world.getBlockState(position);
-            if(!BlockAlgorithms.isSolid((ServerLevel) level(), position)|| block.is(BlockTags.LEAVES)) {
+            if (searchQueue.isEmpty()) {
+                isSuccessful = false;
+                target = BlockPos.ZERO;
                 return true;
             }
+
+            BlockPos currentBlock = searchQueue.poll();
+
+            // If the current block is a target, return it
+            if (isTarget(currentBlock)) {
+                isSuccessful = true;
+                target = currentBlock;
+                return true;
+            }
+
+            // Add only below neighbor to queue
+            addPositionToQueueIfValid(currentBlock.below());
         }
+
         return false;
     }
 
+    /**
+     * Returns true if the block is considered obstructed.
+     * @param state the block state
+     * @param pos the block position
+     * @return true if the block is considered obstructed
+     */
+    @Override
+    protected boolean isObstructed(BlockState state, BlockPos pos)
+    {
+        if(!ModConfig.SERVER.block_infestation_enabled.get())
+        {
+            return true;
+        }
+        else if(isExposedToInfestationWardBlock((ServerLevel) this.level(), pos))
+        {
+            return true;
+        }
 
-    // Unused
-    @Override protected void defineSynchedData() {}
-    @Override protected void readAdditionalSaveData(CompoundTag p_20052_) {}
-    @Override protected void addAdditionalSaveData(CompoundTag p_20139_) {}
+        // Check if block is not beyond world border
+        if(!level().isInWorldBounds(pos))
+        {
+            return true;
+        }
+
+        // This is to prevent the entity from getting stuck in a loop
+        if(visitedPositons.containsKey(pos.asLong()))
+        {
+            return true;
+        }
+
+        boolean isBlockNotExposedToAir = !BlockAlgorithms.isExposedToAir((ServerLevel) this.level(), pos);
+        boolean isBlockNotSculkArachnoid = !state.is(ModBlocks.SCULK_ARACHNOID.get());
+        boolean isBlockNotSculkDuraMatter = !state.is(ModBlocks.SCULK_DURA_MATTER.get());
+
+        if(isBlockNotExposedToAir && isBlockNotSculkArachnoid && isBlockNotSculkDuraMatter)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
 }
