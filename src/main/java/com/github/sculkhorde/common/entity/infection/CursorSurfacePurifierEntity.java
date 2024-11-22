@@ -2,7 +2,7 @@ package com.github.sculkhorde.common.entity.infection;
 
 import com.github.sculkhorde.core.ModEntities;
 import com.github.sculkhorde.util.BlockAlgorithms;
-import com.github.sculkhorde.util.BlockInfestationHelper;
+import com.github.sculkhorde.systems.BlockInfestationSystem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -64,7 +64,7 @@ public class CursorSurfacePurifierEntity extends CursorEntity{
     @Override
     protected boolean isTarget(BlockPos pos)
     {
-        return BlockInfestationHelper.isCurable((ServerLevel) level(), pos);
+        return BlockInfestationSystem.isCurable((ServerLevel) level(), pos);
     }
 
     /**
@@ -74,7 +74,7 @@ public class CursorSurfacePurifierEntity extends CursorEntity{
     @Override
     protected void transformBlock(BlockPos pos)
     {
-        BlockInfestationHelper.tryToCureBlock((ServerLevel) this.level(), pos);
+        BlockInfestationSystem.tryToCureBlock((ServerLevel) this.level(), pos);
 
         // Get all infector cursor entities in area and kill them
         Predicate<CursorSurfaceInfectorEntity> isCursor = Objects::nonNull;

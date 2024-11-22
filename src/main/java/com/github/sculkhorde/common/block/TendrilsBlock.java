@@ -1,8 +1,7 @@
 package com.github.sculkhorde.common.block;
 
 import com.github.sculkhorde.core.ModBlocks;
-import com.github.sculkhorde.core.SculkHorde;
-import com.github.sculkhorde.util.BlockInfestationHelper;
+import com.github.sculkhorde.systems.BlockInfestationSystem;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -162,7 +161,7 @@ public class TendrilsBlock extends VineBlock implements IForgeBlock {
         {
             return false;
         }
-        else if(BlockInfestationHelper.isCurable((ServerLevel) worldIn, blockPosIn))
+        else if(BlockInfestationSystem.isCurable((ServerLevel) worldIn, blockPosIn))
         {
             return false;
         }

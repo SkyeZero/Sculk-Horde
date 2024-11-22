@@ -10,4 +10,6 @@ public interface IBlockInfestationEntry {
     boolean isInfectedVariant(BlockState blockState);
     BlockState getNormalVariant(Level level, BlockPos blockPos);
     BlockState getInfectedVariant(Level level, BlockPos blockPos);
+
+    float getPriority();
 }

@@ -11,6 +11,7 @@ import com.github.sculkhorde.core.SculkHorde;
 import com.github.sculkhorde.core.gravemind.Gravemind;
 import com.github.sculkhorde.core.gravemind.entity_factory.EntityFactoryEntry;
 import com.github.sculkhorde.core.gravemind.entity_factory.ReinforcementRequest;
+import com.github.sculkhorde.systems.BlockInfestationSystem;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.world.entity.SpawnPlacements;
 import net.minecraft.world.level.block.Blocks;
@@ -156,7 +157,7 @@ public class ModEventSubscriber {
 
         SculkHorde.entityFactory.addEntriesToFactory(entries);
 
-        BlockInfestationHelper.initializeInfestationTables();
+        BlockInfestationSystem.initializeInfestationTables();
 
         SculkHorde.randomSculkFlora = new PoolBlocks();
         SculkHorde.randomSculkFlora.addEntry(Blocks.SCULK_CATALYST, 1);

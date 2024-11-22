@@ -1,6 +1,5 @@
 package com.github.sculkhorde.core;
 
-import com.github.sculkhorde.common.block.InfestationEntries.BlockInfestationTable;
 import com.github.sculkhorde.common.loot.ModLootModifier;
 import com.github.sculkhorde.common.pools.PoolBlocks;
 import com.github.sculkhorde.core.gravemind.*;
@@ -37,11 +36,6 @@ public class SculkHorde {
     public static Gravemind gravemind;
     public static ModSavedData savedData;
     public static final Logger LOGGER = LogUtils.getLogger();
-    public static BlockInfestationTable explicitInfectableBlocks;
-    public static BlockInfestationTable tagInfectableBlocks;
-    public static BlockInfestationTable tagInfectableNonFullBlocks;
-    public static BlockInfestationTable configInfectableBlocks;
-    public static BlockInfestationTable[] INFESTATION_TABLES;
     public static PoolBlocks randomSculkFlora;
     public static DeathAreaInvestigator deathAreaInvestigator;
     public static RaidHandler raidHandler;

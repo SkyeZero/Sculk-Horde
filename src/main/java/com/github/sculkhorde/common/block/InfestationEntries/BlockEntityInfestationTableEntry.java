@@ -17,6 +17,13 @@ public abstract class BlockEntityInfestationTableEntry implements IBlockInfestat
     protected ITagInfestedBlock infectedVariant;
     protected Block defaultNormalVariant;
 
+    protected float priority = 0;
+
+    @Override
+    public float getPriority() {
+        return priority;
+    }
+
     // This is needed to tell java that the properties are of the same type
     private static <T extends Comparable<T>> BlockState copyBlockProperty(BlockState from, BlockState to, Property<T> property) {
         // copy only if from and to have the same Property (this solution is a little bit hacky but I don't no a better way)
@@ -27,7 +34,7 @@ public abstract class BlockEntityInfestationTableEntry implements IBlockInfestat
         }
     }
 
-    public BlockEntityInfestationTableEntry(ITagInfestedBlock infectedVariantIn, Block defaultNormalVariantIn) {
+    public BlockEntityInfestationTableEntry(float priority, ITagInfestedBlock infectedVariantIn, Block defaultNormalVariantIn) {
         this.infectedVariant = infectedVariantIn;
         this.defaultNormalVariant = defaultNormalVariantIn;
     }

@@ -3,10 +3,8 @@ package com.github.sculkhorde.common.entity.infection;
 import com.github.sculkhorde.core.ModBlocks;
 import com.github.sculkhorde.core.ModEntities;
 import com.github.sculkhorde.util.BlockAlgorithms;
-import com.github.sculkhorde.util.BlockInfestationHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 

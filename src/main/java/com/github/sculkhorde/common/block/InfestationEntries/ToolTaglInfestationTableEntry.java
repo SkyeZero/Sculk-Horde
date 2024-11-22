@@ -16,9 +16,9 @@ public class ToolTaglInfestationTableEntry extends BlockEntityInfestationTableEn
     protected Tier tierRequired = Tiers.IRON;
 
     // Default constructor
-    public ToolTaglInfestationTableEntry(TagKey<Block> toolRequiredTag, Tier tierRequired, ITagInfestedBlock infectedVariantIn, Block defaultNormalVariantIn)
+    public ToolTaglInfestationTableEntry(float priority, TagKey<Block> toolRequiredTag, Tier tierRequired, ITagInfestedBlock infectedVariantIn, Block defaultNormalVariantIn)
     {
-        super(infectedVariantIn, defaultNormalVariantIn);
+        super(priority, infectedVariantIn, defaultNormalVariantIn);
         this.toolRequiredTag = toolRequiredTag;
         this.tierRequired = tierRequired;
     }

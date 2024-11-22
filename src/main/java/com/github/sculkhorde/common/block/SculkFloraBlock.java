@@ -2,8 +2,6 @@ package com.github.sculkhorde.common.block;
 
 import com.github.sculkhorde.core.ModBlocks;
 import com.github.sculkhorde.core.ModParticles;
-import com.github.sculkhorde.core.SculkHorde;
-import com.github.sculkhorde.util.BlockInfestationHelper;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.Blocks;
@@ -26,7 +24,6 @@ import java.util.Random;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.BushBlock;
 import net.minecraft.world.level.block.SoundType;
-import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class SculkFloraBlock extends BushBlock implements IForgeBlock {

@@ -2,24 +2,24 @@ package com.github.sculkhorde.common.block.InfestationEntries;
 
 import com.github.sculkhorde.core.ModConfig;
 import net.minecraft.core.BlockPos;
-import net.minecraft.tags.TagKey;
-import net.minecraft.world.item.Tier;
-import net.minecraft.world.item.Tiers;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.TierSortingRegistry;
 
 public class ConfigInfestationTableEntry implements IBlockInfestationEntry
 {
     protected ITagInfestedBlock infectedVariant;
-
+    protected float priority = 0;
 
     // Default constructor
     public ConfigInfestationTableEntry(ITagInfestedBlock infectedVariantIn)
     {
         infectedVariant = infectedVariantIn;
+    }
+
+    public float getPriority()
+    {
+        return priority;
     }
 
     public boolean isNormalVariant(BlockState blockState)

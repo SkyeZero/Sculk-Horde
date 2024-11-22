@@ -13,6 +13,13 @@ public class BlockIDOnlyCurableTableEntry implements IBlockInfestationEntry
     protected String normalVariantID;
     protected String infectedVariantID;
 
+    protected float priority = 0;
+
+    @Override
+    public float getPriority() {
+        return priority;
+    }
+
     // This is needed to tell java that the properties are of the same type
     private static <T extends Comparable<T>> BlockState copyBlockProperty(BlockState from, BlockState to, Property<T> property) {
     	// copy only if from and to have the same Property (this solution is a little bit hacky but I don't no a better way)
@@ -24,10 +31,11 @@ public class BlockIDOnlyCurableTableEntry implements IBlockInfestationEntry
     }
 
     // Default constructor
-    public BlockIDOnlyCurableTableEntry(String normalVariantIn, String infectedVariantIn)
+    public BlockIDOnlyCurableTableEntry(float priority, String normalVariantIn, String infectedVariantIn)
     {
         normalVariantID = normalVariantIn;
         infectedVariantID = infectedVariantIn;
+        this.priority = priority;
     }
 
     public boolean isNormalVariant(BlockState blockState)

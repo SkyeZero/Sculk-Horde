@@ -6,7 +6,7 @@ import com.github.sculkhorde.core.ModBlocks;
 import com.github.sculkhorde.core.SculkHorde;
 import com.github.sculkhorde.core.gravemind.entity_factory.EntityFactoryEntry;
 import com.github.sculkhorde.core.gravemind.entity_factory.ReinforcementRequest;
-import com.github.sculkhorde.util.BlockInfestationHelper;
+import com.github.sculkhorde.systems.BlockInfestationSystem;
 import com.github.sculkhorde.util.EntityAlgorithms;
 import com.github.sculkhorde.util.TargetParameters;
 import com.github.sculkhorde.util.TickUnits;
@@ -44,9 +44,6 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-
-import static com.github.sculkhorde.common.block.SculkMassBlock.WATERLOGGED;
-import static com.github.sculkhorde.core.gravemind.entity_factory.EntityFactoryEntry.StrategicValues.*;
 
 
 public class SculkSummonerBlockEntity extends BlockEntity implements GameEventListener.Holder<VibrationSystem.Listener>, VibrationSystem, GeoBlockEntity
@@ -281,7 +278,7 @@ public class SculkSummonerBlockEntity extends BlockEntity implements GameEventLi
      */
     public boolean isValidSpawnPosition(ServerLevel worldIn, BlockPos pos, boolean requireWater)
     {
-        boolean isBlockBelowCurable = BlockInfestationHelper.isCurable(worldIn, pos.below());
+        boolean isBlockBelowCurable = BlockInfestationSystem.isCurable(worldIn, pos.below());
         boolean isBaseBlockReplaceable = worldIn.getBlockState(pos).canBeReplaced(Fluids.WATER);
         boolean isBaseBlockWater = worldIn.getFluidState(pos).is(Fluids.WATER);
         boolean isBlockAboveReplaceable = worldIn.getBlockState(pos.above()).canBeReplaced(Fluids.WATER);

@@ -5,7 +5,7 @@ import com.github.sculkhorde.core.ModConfig;
 import com.github.sculkhorde.core.ModEntities;
 import com.github.sculkhorde.core.SculkHorde;
 import com.github.sculkhorde.util.BlockAlgorithms;
-import com.github.sculkhorde.util.BlockInfestationHelper;
+import com.github.sculkhorde.systems.BlockInfestationSystem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.TickTask;
 import net.minecraft.server.level.ServerLevel;
@@ -86,7 +86,7 @@ public class SculkBeeInfectorEntity extends SculkBeeHarvesterEntity implements G
             return false;
         }
 
-        if(!BlockInfestationHelper.isInfectable((ServerLevel) level(), blockPos))
+        if(!BlockInfestationSystem.isInfectable((ServerLevel) level(), blockPos))
         {
             return false;
         }

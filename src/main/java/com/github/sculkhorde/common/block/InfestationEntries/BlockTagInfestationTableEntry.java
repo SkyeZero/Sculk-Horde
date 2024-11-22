@@ -9,9 +9,9 @@ public class BlockTagInfestationTableEntry extends BlockEntityInfestationTableEn
     protected TagKey<Block> normalVariantTag;
 
     // Default constructor
-    public BlockTagInfestationTableEntry(TagKey<Block> normalVariantIn, ITagInfestedBlock infectedVariantIn, Block defaultNormalVariantIn)
+    public BlockTagInfestationTableEntry(float priority, TagKey<Block> normalVariantIn, ITagInfestedBlock infectedVariantIn, Block defaultNormalVariantIn)
     {
-        super(infectedVariantIn, defaultNormalVariantIn);
+        super(priority, infectedVariantIn, defaultNormalVariantIn);
         normalVariantTag = normalVariantIn;
     }
 

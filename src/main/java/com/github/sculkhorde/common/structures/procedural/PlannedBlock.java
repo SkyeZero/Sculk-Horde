@@ -1,8 +1,6 @@
 package com.github.sculkhorde.common.structures.procedural;
 
 import com.github.sculkhorde.core.ModBlocks;
-import com.github.sculkhorde.core.SculkHorde;
-import com.github.sculkhorde.util.BlockInfestationHelper;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;

@@ -4,7 +4,7 @@ import com.github.sculkhorde.core.ModBlocks;
 import com.github.sculkhorde.core.ModConfig;
 import com.github.sculkhorde.core.ModEntities;
 import com.github.sculkhorde.util.BlockAlgorithms;
-import com.github.sculkhorde.util.BlockInfestationHelper;
+import com.github.sculkhorde.systems.BlockInfestationSystem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -56,7 +56,7 @@ public class CursorSurfaceInfectorEntity extends CursorEntity{
     @Override
     protected boolean isTarget(BlockPos pos)
     {
-        return BlockInfestationHelper.isInfectable((ServerLevel) level(), pos);
+        return BlockInfestationSystem.isInfectable((ServerLevel) level(), pos);
     }
 
     /**
@@ -66,7 +66,7 @@ public class CursorSurfaceInfectorEntity extends CursorEntity{
     @Override
     protected void transformBlock(BlockPos pos)
     {
-        BlockInfestationHelper.tryToInfestBlock((ServerLevel) level(), pos);
+        BlockInfestationSystem.tryToInfestBlock((ServerLevel) level(), pos);
     }
 
     /**
