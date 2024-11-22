@@ -68,6 +68,10 @@ public class ClientModEventSubscriber {
 
         event.registerEntityRenderer(ModEntities.CURSOR_SURFACE_PURIFIER.get(), EmptyRenderer::new);
 
+        event.registerEntityRenderer(ModEntities.CURSOR_TOP_DOWN_INFECTOR.get(), EmptyRenderer::new);
+
+        event.registerEntityRenderer(ModEntities.CURSOR_TOP_DOWN_PURIFIER.get(), EmptyRenderer::new);
+
         event.registerEntityRenderer(ModEntities.SCULK_SPORE_SPEWER.get(), SculkSporeSpewerRenderer::new);
 
         event.registerEntityRenderer(ModEntities.SCULK_RAVAGER.get(), SculkRavagerRenderer::new);

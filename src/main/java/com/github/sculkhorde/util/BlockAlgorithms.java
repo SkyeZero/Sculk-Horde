@@ -418,6 +418,10 @@ public class BlockAlgorithms {
      */
     public static boolean isExposedToInfestationWardBlock(ServerLevel serverWorld, BlockPos targetPos)
     {
+        if(serverWorld.getBlockState(targetPos).is(ModBlocks.INFESTATION_WARD_BLOCK.get())) {
+            return true;
+        }
+
         ArrayList<BlockPos> list = getAdjacentNeighbors(targetPos);
 
         for(BlockPos position : list)
