@@ -28,14 +28,14 @@ public class ChunkInfestationHelper {
 
         // Spawn a Top Down Infector at each block in the chunk, setting its Y position to the highest block in that X,Z coordinate
         for (BlockPos pos : heightMap) {
-            CursorTopDownInfectorEntity cursor = new CursorTopDownInfectorEntity(ModEntities.CURSOR_TOP_DOWN_INFECTOR.get(), level);
+            CursorTopDownInfectorEntity cursor = new CursorTopDownInfectorEntity( level);
             cursor.setPos(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
 
             cursor.setTickIntervalMilliseconds(10);
-            cursor.setLowestY(lowest);
+            //cursor.setLowestY(lowest);
 
             if (pos.getX() == chunkPos.getMinBlockX() || pos.getX() == chunkPos.getMaxBlockX() || pos.getZ() == chunkPos.getMinBlockZ() || pos.getZ() == chunkPos.getMinBlockZ()) {
-                cursor.setSpawnCursor(true);
+                //level.addFreshEntity(cursor);
             }
 
             level.addFreshEntity(cursor);
@@ -57,14 +57,14 @@ public class ChunkInfestationHelper {
 
         // Spawn a Top Down Purifier at each block in the chunk, setting its Y position to the highest block in that X,Z coordinate
         for (BlockPos pos : heightMap) {
-            CursorTopDownPurifierEntity cursor = new CursorTopDownPurifierEntity(ModEntities.CURSOR_TOP_DOWN_PURIFIER.get(), level);
+            CursorTopDownPurifierEntity cursor = new CursorTopDownPurifierEntity(level);
             cursor.setPos(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
 
             cursor.setTickIntervalMilliseconds(10);
-            cursor.setLowestY(lowest);
+            //cursor.setLowestY(lowest);
 
             if (pos.getX() == chunkPos.getMinBlockX() || pos.getX() == chunkPos.getMaxBlockX() || pos.getZ() == chunkPos.getMinBlockZ() || pos.getZ() == chunkPos.getMinBlockZ()) {
-                cursor.setSpawnCursor(true);
+                //cursor.setSpawnCursor(true);
             }
 
             level.addFreshEntity(cursor);
