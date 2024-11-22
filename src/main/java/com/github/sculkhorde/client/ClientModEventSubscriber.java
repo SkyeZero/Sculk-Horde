@@ -58,15 +58,15 @@ public class ClientModEventSubscriber {
 
         event.registerEntityRenderer(ModEntities.SCULK_HATCHER.get(), SculkHatcherRenderer::new);
 
-        event.registerEntityRenderer(ModEntities.CURSOR_PROBER.get(), CursorProberRenderer::new);
+        event.registerEntityRenderer(ModEntities.CURSOR_PROBER.get(), EmptyRenderer::new);
 
-        event.registerEntityRenderer(ModEntities.CURSOR_PURIFIER_PROBER.get(), CursorPurifierProberRenderer::new);
+        event.registerEntityRenderer(ModEntities.CURSOR_PURIFIER_PROBER.get(), EmptyRenderer::new);
 
-        event.registerEntityRenderer(ModEntities.CURSOR_BRIDGER.get(), CursorBridgerRenderer::new);
+        event.registerEntityRenderer(ModEntities.CURSOR_BRIDGER.get(), EmptyRenderer::new);
 
-        event.registerEntityRenderer(ModEntities.CURSOR_SURFACE_INFECTOR.get(), CursorSurfaceInfectorRenderer::new);
+        event.registerEntityRenderer(ModEntities.CURSOR_SURFACE_INFECTOR.get(), EmptyRenderer::new);
 
-        event.registerEntityRenderer(ModEntities.CURSOR_SURFACE_PURIFIER.get(), CursorSurfacePurifierRenderer::new);
+        event.registerEntityRenderer(ModEntities.CURSOR_SURFACE_PURIFIER.get(), EmptyRenderer::new);
 
         event.registerEntityRenderer(ModEntities.SCULK_SPORE_SPEWER.get(), SculkSporeSpewerRenderer::new);
 
@@ -100,7 +100,7 @@ public class ClientModEventSubscriber {
 
         event.registerEntityRenderer(ModEntities.SCULK_SPINE_SPIKE_ATTACK.get(), SculkSpineSpikeAttackRenderer::new);
 
-        event.registerEntityRenderer(ModEntities.AREA_EFFECT_SPHERICAL_CLOUD.get(), AreaEffectSphericalCloudRenderer::new);
+        event.registerEntityRenderer(ModEntities.AREA_EFFECT_SPHERICAL_CLOUD.get(), EmptyRenderer::new);
 
         event.registerEntityRenderer(ModEntities.SCULK_WITCH.get(), SculkWitchRenderer::new);
 
