@@ -11,6 +11,7 @@ import com.github.sculkhorde.systems.AutoPerformanceSystem;
 import com.github.sculkhorde.systems.BeeNestActivitySystem;
 import com.github.sculkhorde.util.ChunkLoading.BlockEntityChunkLoaderHelper;
 import com.github.sculkhorde.util.ChunkLoading.EntityChunkLoaderHelper;
+import com.github.sculkhorde.util.CursorQueueChunks;
 import com.github.sculkhorde.util.DeathAreaInvestigator;
 import com.mojang.logging.LogUtils;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -48,6 +49,8 @@ public class SculkHorde {
     public static final ContributionHandler contributionHandler = new ContributionHandler();
     public static final SculkPopulationHandler populationHandler = new SculkPopulationHandler();
     public static BeeNestActivitySystem beeNestActivitySystem;
+
+    //public static CursorQueueChunks chunkInfectionQueue = new CursorQueueChunks(ModEntities.CURSOR_TOP_DOWN_INFECTOR.get());
 
     public static AutoPerformanceSystem autoPerformanceSystem;
 

@@ -2,9 +2,7 @@ package com.github.sculkhorde.common.entity.infection;
 
 import com.github.sculkhorde.core.ModConfig;
 import com.github.sculkhorde.core.SculkHorde;
-import com.github.sculkhorde.util.BlockAlgorithms;
-import com.github.sculkhorde.util.EntityAlgorithms;
-import com.github.sculkhorde.util.TickUnits;
+import com.github.sculkhorde.util.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -408,6 +406,22 @@ public abstract class CursorEntity extends Entity
     @Override
     public void onRemovedFromWorld() {
         if(level().isClientSide()) { return; }
+    }
+
+
+    private CursorQueue queueHelper;
+
+    public void queue(CursorQueue queue) {
+        queueHelper = queue;
+    }
+
+    boolean shouldSpawnCursor = false;
+    public void setShouldSpawnCursor(boolean state) {shouldSpawnCursor = state;}
+
+    @Override
+    public void remove(RemovalReason reason) {
+        if (queueHelper != null) { queueHelper.removeCursor(this); }
+        super.remove(reason);
     }
 
     public void chanceToThanosSnapThisCursor()

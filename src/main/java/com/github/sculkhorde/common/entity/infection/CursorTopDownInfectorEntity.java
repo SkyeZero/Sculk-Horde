@@ -4,15 +4,13 @@ import com.github.sculkhorde.core.ModBlocks;
 import com.github.sculkhorde.core.ModConfig;
 import com.github.sculkhorde.core.ModEntities;
 import com.github.sculkhorde.util.BlockAlgorithms;
+import com.github.sculkhorde.util.old.BlockInfectionQueue;
+import com.github.sculkhorde.util.old.ChunkInfectionQueue;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.concurrent.TimeUnit;
 
 import static com.github.sculkhorde.util.BlockAlgorithms.isExposedToInfestationWardBlock;
 
@@ -104,5 +102,37 @@ public class CursorTopDownInfectorEntity extends CursorSurfaceInfectorEntity{
 
         return false;
     }
+
+    public void spawnSurfaceCursor() {
+        if (shouldSpawnCursor) {
+            if (blockInfectionQueue != null) {
+                blockInfectionQueue.queueSurfaceCursor(this.blockPosition());
+            }
+            else {
+
+            }
+        }
+    }
+
+    private ChunkInfectionQueue chunkInfectionQueue;
+    private BlockInfectionQueue blockInfectionQueue;
+
+    public void queue(ChunkInfectionQueue queue) {
+        chunkInfectionQueue = queue;
+    }
+
+    public void queue(BlockInfectionQueue queue) {
+        blockInfectionQueue = queue;
+    }
+
+    @Override
+    public void remove(RemovalReason reason) {
+        spawnSurfaceCursor();
+        if (chunkInfectionQueue != null) { chunkInfectionQueue.removeCursor(this); }
+        if (blockInfectionQueue != null) { blockInfectionQueue.removeCursor(this); }
+        super.remove(reason);
+    }
+
+    @Override protected void spawnParticleEffects() {}
 
 }
