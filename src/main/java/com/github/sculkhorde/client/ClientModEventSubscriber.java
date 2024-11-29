@@ -1,6 +1,7 @@
 package com.github.sculkhorde.client;
 
 import com.github.sculkhorde.client.particle.SculkCrustParticle;
+import com.github.sculkhorde.client.renderer.DomainFogHandler;
 import com.github.sculkhorde.client.renderer.block.SculkSummonerBlockRenderer;
 import com.github.sculkhorde.client.renderer.block.SoulHarvesterBlockRenderer;
 import com.github.sculkhorde.client.renderer.entity.*;
@@ -8,6 +9,8 @@ import com.github.sculkhorde.common.screen.SoulHarvesterScreen;
 import com.github.sculkhorde.core.*;
 import com.google.common.collect.Maps;
 import net.minecraft.client.gui.screens.MenuScreens;
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.world.entity.Entity;
@@ -16,6 +19,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -31,10 +35,18 @@ public class ClientModEventSubscriber {
         this.renderers.put(p_229087_1_, p_229087_2_);
     }
 
+    @OnlyIn(Dist.CLIENT)
+    public static void init(final FMLClientSetupEvent event) {
+        // Register any client-specific handlers
+        MinecraftForge.EVENT_BUS.register(new DomainFogHandler());
+    }
 
     @OnlyIn(Dist.CLIENT)
     @SubscribeEvent
     public static void registerRenders(final EntityRenderersEvent.RegisterRenderers event) {
+
+        ItemBlockRenderTypes.setRenderLayer(ModBlocks.BARRIER_OF_SCULK.get(), RenderType.translucent());
+        ItemBlockRenderTypes.setRenderLayer(ModBlocks.BREAKABLE_BARRIER_OF_SCULK.get(), RenderType.translucent());
 
         // Register Renderers for Entities
 

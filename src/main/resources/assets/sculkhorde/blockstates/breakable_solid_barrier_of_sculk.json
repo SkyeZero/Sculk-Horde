@@ -1,0 +1,5 @@
+{
+  "variants": {
+    "": { "model": "sculkhorde:block/breakable_solid_barrier_of_sculk" }
+  }
+}

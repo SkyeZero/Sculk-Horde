@@ -34,6 +34,9 @@ public class ModSounds {
     public static final RegistryObject<SoundEvent> SCULK_ZOMBIE_HURT = registerSoundEvent("sculk_zombie_hurt");
     public static final RegistryObject<SoundEvent> SCULK_ZOMBIE_DEATH = registerSoundEvent("sculk_zombie_death");
 
+    public static final RegistryObject<SoundEvent> DEEP_GREEN_CORRUPTED = registerSoundEvent("deep_green_corrupted");
+    public static final RegistryObject<SoundEvent> BLIND_AND_ALONE_CORRUPTED = registerSoundEvent("blind_and_alone_corrupted");
+
     public static final RegistryObject<SoundEvent> SCULK_VINDICATOR_IDLE = registerSoundEvent("sculk_vindicator_idle");
     public static final RegistryObject<SoundEvent> SCULK_VINDICATOR_HURT = registerSoundEvent("sculk_vindicator_hurt");
     public static final RegistryObject<SoundEvent> SCULK_VINDICATOR_DEATH = registerSoundEvent("sculk_vindicator_death");

@@ -197,6 +197,8 @@ public class SculkNodeBlock extends BaseEntityBlock implements IForgeBlock {
         if (ModConfig.SERVER.should_sculk_nodes_and_raids_spawn_phantoms.get()) {
         	spawnSculkPhantomsAtTopOfWorld(level, newOrigin, 10);
         }
+
+        SculkHorde.sculkDomainHandler.nodeDomainExpansion(level, newOrigin, 64);// doubt it will work but lets see should do it on the block, uses the origin of the node... i think
     }
 
     private static void spawnSculkPhantomsAtTopOfWorld(ServerLevel level, BlockPos origin, int amount)
@@ -300,6 +302,8 @@ public class SculkNodeBlock extends BaseEntityBlock implements IForgeBlock {
         decayRemainingNodeBlocks((ServerLevel) worldIn, pos, 12);
 
         SculkHorde.statisticsData.incrementTotalNodesDestroyed();
+
+        SculkHorde.sculkDomainHandler.nodeDomainShatter(pos);
 
         super.onRemove(state, worldIn, pos, newState, isMoving);
     }

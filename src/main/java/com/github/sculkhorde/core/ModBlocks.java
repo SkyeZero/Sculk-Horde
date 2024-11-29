@@ -11,10 +11,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.*;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -47,6 +44,40 @@ public class ModBlocks {
 		ModItems.ITEMS.register(name, () -> new BlockItem(block.get(),
 				new Item.Properties()));
 	}
+
+	// Dev Block Testing
+	public static final RegistryObject<Block> BARRIER_OF_SCULK =
+			registerBlock("barrier_of_sculk", () -> new GlassBlock(BlockBehaviour.Properties.of()
+					.noOcclusion()
+					.isViewBlocking((state, world, pos) -> false)
+					.isRedstoneConductor((state, world, pos) -> false)
+					.lightLevel(state -> 0)
+					.strength(-1.0F, 3600000.0F)
+					.noLootTable()
+					.sound(SoundType.GLASS)
+			));
+
+	public static final RegistryObject<Block> SOLID_BARRIER_OF_SCULK =
+			registerBlock("solid_barrier_of_sculk", () -> new Block(BlockBehaviour.Properties.copy(Blocks.BEDROCK)
+					.sound(SoundType.DEEPSLATE)
+			));
+
+	public static final RegistryObject<Block> BREAKABLE_BARRIER_OF_SCULK =
+			registerBlock("breakable_barrier_of_sculk", () -> new GlassBlock(BlockBehaviour.Properties.of()
+					.noOcclusion()
+					.isViewBlocking((state, world, pos) -> false)
+					.isRedstoneConductor((state, world, pos) -> false)
+					.lightLevel(state -> 0)
+					.strength(-1.0F, 0.0f)
+					.noLootTable()
+					.sound(SoundType.GLASS)
+			));
+
+	public static final RegistryObject<Block> BREAKABLE_SOLID_BARRIER_OF_SCULK =
+			registerBlock("breakable_solid_barrier_of_sculk", () -> new Block(BlockBehaviour.Properties.copy(Blocks.BEDROCK)
+					.strength(-1.0F, 0.0f)
+					.sound(SoundType.DEEPSLATE)
+			));
 
 	//simple methods to quickly register stairs
 	private static RegistryObject<StairBlock> stairs(RegistryObject<Block> original) {

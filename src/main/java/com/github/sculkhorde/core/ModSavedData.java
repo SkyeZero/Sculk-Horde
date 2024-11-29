@@ -7,6 +7,7 @@ import com.github.sculkhorde.core.gravemind.RaidData;
 import com.github.sculkhorde.core.gravemind.RaidHandler;
 import com.github.sculkhorde.core.gravemind.events.EventHandler;
 import com.github.sculkhorde.misc.StatisticsData;
+import com.github.sculkhorde.systems.domains.SculkDomain;
 import com.github.sculkhorde.util.BlockAlgorithms;
 import com.github.sculkhorde.util.ChunkLoading.BlockEntityChunkLoaderHelper;
 import com.github.sculkhorde.util.ChunkLoading.EntityChunkLoaderHelper;
@@ -73,6 +74,7 @@ public class ModSavedData extends SavedData {
     }
 
     private final ArrayList<NodeEntry> nodeEntries = new ArrayList<>();
+    //private final ArrayList<SculkDomain> sculkDomains = new ArrayList<>();
     private final ArrayList<BeeNestEntry> beeNestEntries = new ArrayList<>();
     private final Map<String, HostileEntry> hostileEntries = new HashMap<>();
     private final ArrayList<PriorityBlockEntry> priorityBlockEntries = new ArrayList<>();
@@ -125,6 +127,8 @@ public class ModSavedData extends SavedData {
         SculkHorde.savedData.getDeathAreaEntries().clear();
         SculkHorde.savedData.getAreasOfInterestEntries().clear();
 
+        //SculkHorde.savedData.getSculkDomains().clear();
+
         SculkHorde.savedData.setHordeState(HordeState.values()[nbt.getInt("hordeState")]);
         SculkHorde.savedData.setSculkAccumulatedMass(nbt.getInt(sculkAccumulatedMassIdentifier));
         SculkHorde.savedData.setNoNodeSpawningTicksElapsed(nbt.getInt(ticksSinceSculkNodeDestructionIdentifier));
@@ -165,6 +169,12 @@ public class ModSavedData extends SavedData {
         for(int i = 0; gravemindData.contains("player_profile_entry" + i); i++) {
             SculkHorde.savedData.getPlayerProfileEntries().add(PlayerProfileEntry.serialize(gravemindData.getCompound("player_profile_entry" + i)));
         }
+
+        /*
+        for(int i = 0; gravemindData.contains("sculk_domain_entry" + i); i++) {
+            SculkHorde.savedData.getSculkDomains().add()
+        }
+         */
 
         if(RaidHandler.raidData == null)
         {
@@ -358,6 +368,13 @@ public class ModSavedData extends SavedData {
     public ArrayList<NodeEntry> getNodeEntries() {
         return nodeEntries;
     }
+
+    /*
+    public ArrayList<SculkDomain> getSculkDomains() {
+        return sculkDomains;
+    }
+     */
+
 
     public ArrayList<BeeNestEntry> getBeeNestEntries() {
         return beeNestEntries;
@@ -1033,6 +1050,109 @@ public class ModSavedData extends SavedData {
         }
 
     }
+
+    /*
+    public static class SculkDomainEntry
+    {
+        private final ServerLevel serverLevel;
+        private final BlockPos center;
+        private final int radius;
+
+        private final float fogRed;
+        private final float fogGreen;
+        private final float fogBlue;
+
+        private final boolean overrideDistance;
+        private final float fogStart;
+        private final float fogEnd;
+
+        private final Map<BlockPos, BlockState> replacedMap = new HashMap<>();
+        private final Set<Entity> trackedEntities = new HashSet<>();
+        private final Set<Player> trackedPlayers = new HashSet<>();
+
+        private ResourceKey<Level> dimension;
+
+        public SculkDomainEntry(ServerLevel level, BlockPos centerBlock, int sphereRadius, ) {
+            serverLevel = level;
+            center = centerBlock;
+            radius = sphereRadius;
+
+            fogRed = 0.071f;
+            fogGreen = 0.118f;
+            fogBlue = 0.188f;
+
+            overrideDistance = false;
+            fogStart = 0f;
+            fogEnd = sphereRadius;
+
+            this.dimension = level.dimension();
+        }
+
+        public SculkDomainEntry(ServerLevel level, BlockPos centerBlock, int sphereRadius, float red, float green, float blue) {
+            serverLevel = level;
+            center = centerBlock;
+            radius = sphereRadius;
+
+            fogRed = red;
+            fogGreen = green;
+            fogBlue = blue;
+
+            overrideDistance = false;
+            fogStart = 0f;
+            fogEnd = sphereRadius;
+
+            this.dimension = level.dimension();
+        }
+
+        public SculkDomainEntry(ServerLevel level, BlockPos centerBlock, int sphereRadius, float red, float green, float blue, float start, float end) {
+            serverLevel = level;
+            center = centerBlock;
+            radius = sphereRadius;
+
+            fogRed = red;
+            fogGreen = green;
+            fogBlue = blue;
+
+            overrideDistance = true;
+            fogStart = start;
+            fogEnd = end;
+
+            this.dimension = level.dimension();
+        }
+
+        public CompoundTag deserialize()
+        {
+            CompoundTag nbt = new CompoundTag();
+
+            nbt.putString("serverLevel", serverLevel.toString());
+            nbt.putLong("center", center.asLong());
+            nbt.putInt("radius", radius);
+
+            nbt.putFloat("red", fogRed);
+            nbt.putFloat("green", fogGreen);
+            nbt.putFloat("blue", fogBlue);
+
+            nbt.putBoolean("override", overrideDistance);
+            nbt.putFloat("start", fogStart);
+            nbt.putFloat("end", fogEnd);
+
+
+
+            return nbt;
+        }
+
+        public static SculkDomainEntry serialize(CompoundTag nbt)
+        {
+            ResourceKey<Level> dimensionResourceKey = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(nbt.getString("dimension")));
+
+
+
+
+            return new SculkDomainEntry(dimensionResourceKey, BlockPos.of(nbt.getLong("position")), BlockPos.of(nbt.getLong("parentNodePosition")));
+        }
+
+    }
+     */
 
     /**
      * This class is a representation of the actual

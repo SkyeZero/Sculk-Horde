@@ -1,5 +1,6 @@
 package com.github.sculkhorde.core;
 
+import com.github.sculkhorde.client.ClientModEventSubscriber;
 import com.github.sculkhorde.common.loot.ModLootModifier;
 import com.github.sculkhorde.common.pools.PoolBlocks;
 import com.github.sculkhorde.core.gravemind.*;
@@ -9,11 +10,13 @@ import com.github.sculkhorde.misc.StatisticsData;
 import com.github.sculkhorde.misc.contributions.ContributionHandler;
 import com.github.sculkhorde.systems.AutoPerformanceSystem;
 import com.github.sculkhorde.systems.BeeNestActivitySystem;
+import com.github.sculkhorde.systems.domains.SculkDomainHandler;
+import com.github.sculkhorde.systems.domains.SculkDomainTickHandler;
 import com.github.sculkhorde.util.ChunkLoading.BlockEntityChunkLoaderHelper;
 import com.github.sculkhorde.util.ChunkLoading.EntityChunkLoaderHelper;
-import com.github.sculkhorde.util.CursorQueueChunks;
 import com.github.sculkhorde.util.DeathAreaInvestigator;
 import com.mojang.logging.LogUtils;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -51,6 +54,9 @@ public class SculkHorde {
     public static BeeNestActivitySystem beeNestActivitySystem;
 
     //public static CursorQueueChunks chunkInfectionQueue = new CursorQueueChunks(ModEntities.CURSOR_TOP_DOWN_INFECTOR.get());
+    //public static SphereManager sphereManager = new SphereManager();
+    public static SculkDomainHandler sculkDomainHandler; //= new SculkDomainHandler(20);
+    //public static SculkDomainTickHandler sculkDomainTickHandler = new SculkDomainTickHandler();
 
     public static AutoPerformanceSystem autoPerformanceSystem;
 
@@ -80,6 +86,9 @@ public class SculkHorde {
         ModCreativeModeTab.TABS.register(bus); //Load Creative Tabs
         ModRecipes.register(bus); //Load Recipes
         ModLootModifier.register(bus);
+
+        bus.addListener(ClientModEventSubscriber::init);
+        //MinecraftForge.EVENT_BUS.register(sculkDomainTickHandler);
     }
 
     public static boolean isDebugMode() {

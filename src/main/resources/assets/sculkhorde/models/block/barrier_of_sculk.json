@@ -1,0 +1,7 @@
+{
+  "parent": "block/cube_all",
+  "render_type": "minecraft:transparent",
+  "textures": {
+    "all": "sculkhorde:block/barrier_of_sculk"
+  }
+}

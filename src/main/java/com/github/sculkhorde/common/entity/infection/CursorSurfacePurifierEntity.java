@@ -1,5 +1,6 @@
 package com.github.sculkhorde.common.entity.infection;
 
+import com.github.sculkhorde.core.ModBlocks;
 import com.github.sculkhorde.core.ModEntities;
 import com.github.sculkhorde.util.BlockAlgorithms;
 import com.github.sculkhorde.systems.BlockInfestationSystem;
@@ -10,14 +11,18 @@ import net.minecraft.server.TickTask;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 import java.util.function.Predicate;
+
+import static com.github.sculkhorde.util.BlockAlgorithms.isExposedToInfestationWardBlock;
 
 public class CursorSurfacePurifierEntity extends CursorEntity{
 
@@ -135,6 +140,10 @@ public class CursorSurfacePurifierEntity extends CursorEntity{
             }
         }
 
+        else if(isExposedToWardBlock((ServerLevel) this.level(), pos)) {
+            return true;
+        }
+
         // This is to prevent the entity from getting stuck in a loop
         if(visitedPositons.containsKey(pos.asLong()))
         {
@@ -144,6 +153,34 @@ public class CursorSurfacePurifierEntity extends CursorEntity{
         if(!BlockAlgorithms.isExposedToAir((ServerLevel) this.level(), pos))
         {
             return true;
+        }
+
+        return false;
+    }
+
+    public static boolean isExposedToWardBlock(ServerLevel serverWorld, BlockPos targetPos)
+    {
+        BlockState target = serverWorld.getBlockState(targetPos);
+
+        Block clearBarrier = ModBlocks.BARRIER_OF_SCULK.get();
+        Block solidBarrier = ModBlocks.SOLID_BARRIER_OF_SCULK.get();
+        Block breakableClearBarrier = ModBlocks.BREAKABLE_BARRIER_OF_SCULK.get();
+        Block breakableSolidBarrier = ModBlocks.BREAKABLE_SOLID_BARRIER_OF_SCULK.get();
+
+
+        if(target.is(clearBarrier) || target.is(solidBarrier) || target.is(breakableClearBarrier) || target.is(breakableSolidBarrier)) {
+            return true;
+        }
+
+        ArrayList<BlockPos> list = BlockAlgorithms.getAdjacentNeighbors(targetPos);
+
+        for(BlockPos position : list)
+        {
+            BlockState currentTarget = serverWorld.getBlockState(position);
+            if(currentTarget.is(clearBarrier) || currentTarget.is(solidBarrier) || currentTarget.is(breakableClearBarrier) || currentTarget.is(breakableSolidBarrier))
+            {
+                return true;
+            }
         }
 
         return false;

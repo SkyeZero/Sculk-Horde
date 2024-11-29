@@ -45,6 +45,20 @@
       }
     ]
   },
+  "deep_green_corrupted": {
+    "sounds": [
+      "sculkhorde:deep_green_corrupted_1",
+      "sculkhorde:deep_green_corrupted_2",
+      "sculkhorde:deep_green_corrupted_3"
+    ]
+  },
+  "blind_and_alone_corrupted": {
+    "sounds": [
+      "sculkhorde:blind_and_alone_corrupted_1",
+      "sculkhorde:blind_and_alone_corrupted_2",
+      "sculkhorde:blind_and_alone_corrupted_3"
+    ]
+  },
   "sculk_enderman_death": {
     "subtitle": "sounds.sculkhorde.sculk_enderman_death",
     "sounds": [

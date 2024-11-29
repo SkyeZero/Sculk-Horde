@@ -11,6 +11,7 @@ import com.github.sculkhorde.core.gravemind.events.EventHandler;
 import com.github.sculkhorde.misc.StatisticsData;
 import com.github.sculkhorde.systems.BeeNestActivitySystem;
 import com.github.sculkhorde.systems.AutoPerformanceSystem;
+import com.github.sculkhorde.systems.domains.SculkDomainHandler;
 import com.github.sculkhorde.util.ChunkLoading.BlockEntityChunkLoaderHelper;
 import com.github.sculkhorde.util.ChunkLoading.EntityChunkLoaderHelper;
 import net.minecraft.core.BlockPos;
@@ -61,6 +62,7 @@ public class ForgeEventSubscriber {
             SculkHorde.eventHandler = new EventHandler(); //Initialize Event Handler
             SculkHorde.beeNestActivitySystem = new BeeNestActivitySystem();
             SculkHorde.autoPerformanceSystem = new AutoPerformanceSystem();
+            SculkHorde.sculkDomainHandler = new SculkDomainHandler(20);
             ModConfig.SERVER.loadItemsInfectionCursorsCanEat();
             ModConfig.SERVER.loadConfiguredInfestableBlocks();
 
@@ -103,6 +105,7 @@ public class ForgeEventSubscriber {
         SculkHorde.blockEntityChunkLoaderHelper.processBlockChunkLoadRequests();
         SculkHorde.entityChunkLoaderHelper.processEntityChunkLoadRequests();
         SculkHorde.beeNestActivitySystem.serverTick();
+        SculkHorde.sculkDomainHandler.tickHandler();
 
         // Only run stuff below every 5 minutes
         if (event.level.getGameTime() - time_save_point < TickUnits.convertMinutesToTicks(5))
@@ -256,6 +259,13 @@ public class ForgeEventSubscriber {
     {
         if (event.phase == TickEvent.Phase.START) {
             SculkHorde.autoPerformanceSystem.onServerTick();
+        }
+    }
+
+    @SubscribeEvent
+    public static void onClientTick(TickEvent.ClientTickEvent event) {
+        if (event.phase != TickEvent.Phase.END && SculkHorde.sculkDomainHandler != null) {
+            SculkHorde.sculkDomainHandler.ambianceHandler();
         }
     }
 }

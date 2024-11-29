@@ -33,7 +33,8 @@ public class ModCommands {
                 .then(SummonReinforcementsCommand.register(dispatcher, buildContext))
                 .then(NodesStatusCommand.register(dispatcher, buildContext))
                 .then(VesselCommand.register(dispatcher, buildContext))
-                .then(ChunkCommand.register(dispatcher, buildContext));
+                .then(ChunkCommand.register(dispatcher, buildContext))
+                .then(DomainCommand.register(dispatcher, buildContext));
 
         dispatcher.register(cmd);
     }
