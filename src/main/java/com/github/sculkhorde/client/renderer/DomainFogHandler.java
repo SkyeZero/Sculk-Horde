@@ -6,6 +6,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.event.ViewportEvent.RenderFog;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -26,17 +27,28 @@ public class DomainFogHandler {
         Map<Integer, SculkDomain> trackedDomains = SculkHorde.sculkDomainHandler.getTrackedDomains();
         for (Map.Entry<Integer, SculkDomain> entry : trackedDomains.entrySet()) {
 
-            BlockPos blockCenter = entry.getValue().getCenter();
+            SculkDomain domain = entry.getValue();
+
+            BlockPos blockCenter = domain.getCenter();
             Vec3 vec3Center = new Vec3(blockCenter.getX()+0.5, blockCenter.getY()+0.5, blockCenter.getZ()+0.5);
 
-            int radius = entry.getValue().getRadius();
-            float di = radius*radius;
+            int radius = domain.getRadius();    // 20 Blocks
+            float innerDome = radius*radius;    // 400 Blocks
+            float outerDome = domain.fog.externalFogRadius*domain.fog.externalFogRadius; // 1600 Blocks
 
             double distanceSquared = cameraPos.distanceToSqr(vec3Center);
-            if (distanceSquared <= di) {
-                applyCustomFog(event, 0.071f, 0.118f, 0.188f, 0.0f, radius); // Fog color, start, and end distances
-            } else if (distanceSquared <= di*2){
-                applyCustomFog(event, 0.071f, 0.118f, 0.188f, 0.0f, radius); // Fog color, start, and end distances
+
+            float red = domain.fog.red;
+            float green = domain.fog.green;
+            float blue = domain.fog.blue;
+
+            float distanceToInner = (float) (distanceSquared-innerDome);
+            float fogDistance = Mth.sqrt(distanceToInner);
+
+            if (distanceSquared <= innerDome) {
+                applyCustomFog(event, red, green, blue, 0.0f, radius); // Fog color, start, and end distances
+            } else if (distanceSquared <= outerDome){
+                applyCustomFog(event, red, green, blue, fogDistance, fogDistance+2); // Fog color, start, and end distances
             }
         }
     }

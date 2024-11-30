@@ -19,44 +19,42 @@ import java.util.Map;
 
 public class SculkDomainBuilder {
 
-    ArrayList<BlockPos> toBarrier;
-    ArrayList<BlockPos> toCheck;
-    ArrayList<BlockPos> toClear = new ArrayList<>();
-    ArrayList<BlockPos> toInfect = new ArrayList<>();
+    private ArrayList<BlockPos> toBarrier;
+    private ArrayList<BlockPos> toCheck;
+    private final ArrayList<BlockPos> toClear = new ArrayList<>();
+    private final ArrayList<BlockPos> toInfect = new ArrayList<>();
+    private final ArrayList<BlockPos> toPlacePos = new ArrayList<>();
 
-    ArrayList<BlockPos> toPlacePos = new ArrayList<>();
-    Map<BlockPos, BlockState> replaced;
+    private Map<BlockPos, BlockState> replaced;
 
-    boolean breakableBarrier;
+    private final Level level;
+    private final ServerLevel serverLevel;
 
-    Level level;
-    ServerLevel serverLevel;
+    private int currentBlock = 0;
+    private int currentBarrierBlock = 0;
+    private int currentInfectionBlock = 0;
+    private int currentDissolveBlock = 0;
 
-    int currentBlock = 0;
-    int currentBarrierBlock = 0;
-    int currentInfectionBlock = 0;
+    private boolean barrierMode = false;
+    private boolean checkFinished = false;
+    private boolean clearFinished = false;
+    private boolean barrierFinished = false;
+    private boolean infectFinished = false;
+    private boolean dissolveFinished = false;
 
-    int currentDissolveBlock = 0;
+    private int barrierBatch = 512;
+    private int checkBatch = 10240;
+    private int clearBatch = 1024;
+    private int infectBatch = 256;
+    private int dissolveBatch = 128;
 
-    boolean barrierMode = false;
-    boolean checkFinished = false;
-    boolean clearFinished = false;
-    boolean barrierFinished = false;
-    boolean infectFinished = false;
+    private BlockState clearBarrier;
+    private BlockState solidBarrier;
 
-    boolean dissolveFinished = false;
+    private final SculkDomain sculkDomain;
 
-    int barrierBatch = 512;
-    int checkBatch = 10240;
-    int clearBatch = 1024;
-    int infectBatch = 256;
-
-    int dissolveBatch = 128;
-
-    BlockState clearBarrier;
-    BlockState solidBarrier;
-
-    public SculkDomainBuilder(Level world, ArrayList<BlockPos> barrierBlocks, ArrayList<BlockPos> internalBlocks, Boolean breakable) {
+    public SculkDomainBuilder(SculkDomain domain, Level world, ArrayList<BlockPos> barrierBlocks, ArrayList<BlockPos> internalBlocks, Boolean breakable) {
+        sculkDomain = domain;
         level = world;
         serverLevel = (ServerLevel) level;
 
@@ -74,7 +72,8 @@ public class SculkDomainBuilder {
         getBlocks();
     }
 
-    public SculkDomainBuilder(Level world, Map<BlockPos, BlockState> map) {
+    public SculkDomainBuilder(SculkDomain domain, Level world, Map<BlockPos, BlockState> map) {
+        sculkDomain = domain;
         level = world;
         serverLevel = (ServerLevel) level;
 
@@ -83,9 +82,11 @@ public class SculkDomainBuilder {
         getReplacedBlocks();
     }
 
-    public SculkDomainBuilder(Level world, ArrayList<BlockPos> barrierBlocks, Boolean breakable) {
+    public SculkDomainBuilder(SculkDomain domain, Level world, ArrayList<BlockPos> barrierBlocks, Boolean breakable) {
+        sculkDomain = domain;
         level = world;
         serverLevel = (ServerLevel) level;
+
         toBarrier = barrierBlocks;
 
         if (breakable) {
@@ -97,6 +98,18 @@ public class SculkDomainBuilder {
         }
 
         regen();
+    }
+
+    protected void domainComplete() {
+        sculkDomain.domainCompleted();
+    }
+
+    protected void domainRegenerated() {
+        sculkDomain.domainRegenerated();
+    }
+
+    protected void domainDissolved() {
+        //sculkDomain.domainDissolved();
     }
 
     public void regen() {
@@ -114,6 +127,8 @@ public class SculkDomainBuilder {
 
         if (!barrierFinished) {
             TaskScheduler.scheduleTask(1, this::regen);
+        } else {
+            domainRegenerated();
         }
     }
 
@@ -141,6 +156,8 @@ public class SculkDomainBuilder {
             }
 
             TaskScheduler.scheduleTask(1, this::dissolve);
+        } else {
+            domainDissolved();
         }
     }
 
@@ -208,6 +225,7 @@ public class SculkDomainBuilder {
     public void run() {
         if (barrierFinished && infectFinished) {
             SculkHorde.LOGGER.info("Domain Complete!");
+            domainComplete();
             return;
         } else {
             if (!barrierFinished && !infectFinished) {

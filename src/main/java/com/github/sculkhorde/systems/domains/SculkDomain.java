@@ -1,13 +1,11 @@
 package com.github.sculkhorde.systems.domains;
 
-import com.github.sculkhorde.common.block.SculkAncientNodeBlock;
 import com.github.sculkhorde.common.entity.infection.CursorSurfaceInfectorEntity;
 import com.github.sculkhorde.common.entity.infection.CursorSurfacePurifierEntity;
 import com.github.sculkhorde.core.*;
 import com.github.sculkhorde.util.TaskScheduler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -15,15 +13,11 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.item.PrimedTnt;
-import net.minecraft.world.entity.monster.Monster;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.Vec3;
 
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 public class SculkDomain {
     private final ServerLevel serverLevel;
@@ -31,18 +25,10 @@ public class SculkDomain {
     private final int radius;
 
     private final boolean breakableBarrier;
-    private final boolean regenBarrier = true;
+    private final boolean regenBarrier;
 
-    private int regenCheckCooldown = 30;
-
-    private final float fogRed;
-    private final float fogGreen;
-    private final float fogBlue;
-
-    private final boolean overrideDistance;
-    private final float fogStart;
-    private final float fogEnd;
-
+    private boolean regenEnabled = false;
+    private int regenCheckCooldown = 10;
     private final int id;
 
     private final Map<BlockPos, BlockState> replacedMap = new HashMap<>();
@@ -50,55 +36,34 @@ public class SculkDomain {
 
     private final Random r = new Random();
 
-    public SculkDomain(ServerLevel level, BlockPos centerBlock, int sphereRadius, boolean breakable, int domainId) {
-        serverLevel = level;
-        center = centerBlock;
-        radius = sphereRadius;
+    // [Fog Handler Variables] -------------------------------------------------------------------------------------------------------------------------------------------- //
+    public class Fog {
+        public boolean renderInDomain = true;       // Should display foggy effect to players within a domain
+        public boolean renderOutsideDomain = true;  // Should display foggy effect to players within a domain
+        public int externalFogRadius;               // Secondary domain fog that gets denser closer player is to center when outside domain
 
-        fogRed = 0.071f;
-        fogGreen = 0.118f;
-        fogBlue = 0.188f;
-
-        overrideDistance = false;
-        fogStart = 0f;
-        fogEnd = radius;
-
-        breakableBarrier = breakable;
-        id = domainId;
+        public float start = 0.0f;          // If more than 0f, the fog will not begin at the camera of the player
+        public float end = 16.0f;           // Distance at which fog becomes completely opaque
+        public float red = 0.071f;          // Red   | RGB Colour of Fog - Max Value = 1.0f
+        public float green = 0.118f;        // Green | RGB Colour of Fog - Max Value = 1.0f
+        public float blue = 0.188f;         // Blue  | RGB Colour of Fog - Max Value = 1.0f
     }
 
-    public SculkDomain(ServerLevel level, BlockPos centerBlock, int sphereRadius, boolean breakable, int domainId, float red, float green, float blue) {
+    public final Fog fog = new Fog();   // Rather than using an extra 5 - 9 extra functions, this seemed like the cleaner method
+    // [Fog Handler Variables] -------------------------------------------------------------------------------------------------------------------------------------------- //
+
+    public SculkDomain(ServerLevel level, BlockPos centerBlock, int sphereRadius, boolean breakable, boolean regen, int domainId) {
         serverLevel = level;
         center = centerBlock;
         radius = sphereRadius;
 
-        fogRed = red;
-        fogGreen = green;
-        fogBlue = blue;
-
-        overrideDistance = false;
-        fogStart = 0f;
-        fogEnd = sphereRadius;
+        fog.externalFogRadius = radius*2;
 
         breakableBarrier = breakable;
+        regenBarrier = regen;
         id = domainId;
-    }
 
-    public SculkDomain(ServerLevel level, BlockPos centerBlock, int sphereRadius, boolean breakable, int domainId, float red, float green, float blue, float start, float end) {
-        serverLevel = level;
-        center = centerBlock;
-        radius = sphereRadius;
-
-        fogRed = red;
-        fogGreen = green;
-        fogBlue = blue;
-
-        overrideDistance = true;
-        fogStart = start;
-        fogEnd = end;
-
-        breakableBarrier = breakable;
-        id = domainId;
+        SculkHorde.LOGGER.info("Created new domain with ID: " + id);
     }
 
     public int getId() {
@@ -123,7 +88,7 @@ public class SculkDomain {
         }
          */
 
-        new SculkDomainBuilder(serverLevel, replacedMap);
+        new SculkDomainBuilder(this, serverLevel, replacedMap);
 
         //serverLevel.playSound(null, center, ModSounds.NODE_DESTROY_SOUND.get(), SoundSource.HOSTILE, 0.5f, 0.5f);
     }
@@ -162,6 +127,18 @@ public class SculkDomain {
 
     public BlockPos getCenter() {
         return center;
+    }
+
+    public void domainCompleted() {
+        regenEnabled = true;
+    }
+
+    public void domainRegenerated() {
+        regenEnabled = true;
+    }
+
+    public void domainDissolved() {
+
     }
 
     private void checkEntities() {
@@ -243,27 +220,30 @@ public class SculkDomain {
     private final Block breakableSolidBarrier = ModBlocks.BREAKABLE_SOLID_BARRIER_OF_SCULK.get();
 
     private void regenSphere() {
-        SculkHorde.LOGGER.info(this + ": Running Regen Check...");
-        ArrayList<BlockPos> blocksToRegen = new ArrayList<>();
+        if (regenEnabled) {
+            SculkHorde.LOGGER.info(this + ": Running Regen Check...");
+            ArrayList<BlockPos> blocksToRegen = new ArrayList<>();
 
-        for (Map.Entry<BlockPos, BlockState> entry : replacedMap.entrySet()) {
-            BlockPos pos = entry.getKey();
-            BlockState blockAtPos = serverLevel.getBlockState(pos);
+            for (Map.Entry<BlockPos, BlockState> entry : replacedMap.entrySet()) {
+                BlockPos pos = entry.getKey();
+                BlockState blockAtPos = serverLevel.getBlockState(pos);
 
-            if (!blockAtPos.is(clearBarrier) && !blockAtPos.is(solidBarrier) && !blockAtPos.is(breakableClearBarrier) && !blockAtPos.is(breakableSolidBarrier)) {
-                blocksToRegen.add(pos);
+                if (!blockAtPos.is(clearBarrier) && !blockAtPos.is(solidBarrier) && !blockAtPos.is(breakableClearBarrier) && !blockAtPos.is(breakableSolidBarrier)) {
+                    blocksToRegen.add(pos);
+                }
             }
-        }
 
-        if (blocksToRegen.isEmpty()) {
-            regenCheckCooldown = 10;
-            SculkHorde.LOGGER.info(this + ": Nothing to regen, rescheduling...");
-        }
-        else {
-            SculkHorde.LOGGER.info(this + ": Blocks found to regen, scheduling task...");
-            Collections.shuffle(blocksToRegen);
-            TaskScheduler.scheduleTask(100, () -> new SculkDomainBuilder(serverLevel, blocksToRegen, breakableBarrier));
-            regenCheckCooldown = 15;
+            if (blocksToRegen.isEmpty()) {
+                regenCheckCooldown = 5;
+                SculkHorde.LOGGER.info(this + ": Nothing to regen, rescheduling...");
+            }
+            else {
+                SculkHorde.LOGGER.info(this + ": Blocks found to regen, scheduling task...");
+                Collections.shuffle(blocksToRegen);
+                TaskScheduler.scheduleTask(100, () -> new SculkDomainBuilder(this, serverLevel, blocksToRegen, breakableBarrier));
+                regenEnabled = false;
+                regenCheckCooldown = 5;
+            }
         }
     }
 
@@ -302,7 +282,7 @@ public class SculkDomain {
             }
         }
 
-        new SculkDomainBuilder(serverLevel, barrierBlocks, blocksInside, breakableBarrier);
+        new SculkDomainBuilder(this, serverLevel, barrierBlocks, blocksInside, breakableBarrier);
     }
 
 }

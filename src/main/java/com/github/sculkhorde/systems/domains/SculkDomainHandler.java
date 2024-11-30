@@ -154,16 +154,7 @@ public class SculkDomainHandler {
         }
     }
 
-    public void saveDomain(ServerLevel serverLevel, BlockPos center, int radius, int id) {
-
-    }
-
-    public void loadDomain(ServerLevel serverLevel, BlockPos center, int radius, int id) {
-        //SculkDomain newDomain = new SculkDomain(serverLevel, center, radius);
-        //trackedDomains.put(id, newDomain);
-    }
-
-    public int domainExpansion(ServerLevel serverLevel, BlockPos center, int radius, boolean breakable) {
+    public int domainExpansion(ServerLevel serverLevel, BlockPos center, int radius, boolean breakable, boolean regen) {
         Random rand = new Random();
         int domainId = 0;
 
@@ -171,7 +162,7 @@ public class SculkDomainHandler {
             domainId = rand.nextInt(9999);
         }
 
-        SculkDomain newDomain = new SculkDomain(serverLevel, center, radius, breakable, domainId);
+        SculkDomain newDomain = new SculkDomain(serverLevel, center, radius, breakable, regen, domainId);
         trackedDomains.put(domainId, newDomain);
 
         newDomain.domainExpansion();
@@ -187,7 +178,7 @@ public class SculkDomainHandler {
             domainId = rand.nextInt(9999);
         }
 
-        SculkDomain newDomain = new SculkDomain(serverLevel, node.above(10), radius, true, domainId);
+        SculkDomain newDomain = new SculkDomain(serverLevel, node.above(10), radius, true, true, domainId);
         trackedDomains.put(domainId, newDomain);
         trackedNodeDomains.put(node, newDomain);
 
@@ -207,6 +198,18 @@ public class SculkDomainHandler {
         if (trackedDomains.containsKey(id)) {
             trackedDomains.get(id).domainShatter();
             trackedDomains.remove(id);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public boolean domainFogColour(int id, float red, float green, float blue) {
+        if (trackedDomains.containsKey(id)) {
+            SculkDomain domain = trackedDomains.get(id);
+            domain.fog.red = red;
+            domain.fog.green = green;
+            domain.fog.blue = blue;
             return true;
         } else {
             return false;
